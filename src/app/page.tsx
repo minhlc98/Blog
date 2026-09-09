@@ -1,69 +1,87 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import Banner from "@/components/Banner";
+import PostCard from "@/components/PostCard";
+import Pagination from "@/components/Pagination";
+import styles from "@/components/PostCard.module.css";
 
-export default function Home() {
+import axiosInstance from "@/lib/axios";
+
+async function getHomeData(locale: string) {
+  try {
+    const res = await axiosInstance.get(`/home?populate=*&locale=${locale}`);
+    return res.data;
+  } catch (error) {
+    console.error("Failed to fetch home data", error);
+    return null;
+  }
+}
+
+async function getPostsData(locale: string, page: number) {
+  try {
+    const res = await axiosInstance.get(
+      `/posts?populate=*&locale=${locale}&pagination[page]=${page}&pagination[pageSize]=6`
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Failed to fetch posts data", error);
+    return null;
+  }
+}
+
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
+
+export default async function Home(props: { searchParams: SearchParams }) {
+  const searchParams = await props.searchParams;
+  const locale = searchParams.locale === "en" ? "en" : "vi";
+  const page = Number(searchParams.page) || 1;
+
+  const homeDataRes = await getHomeData(locale);
+  const postsDataRes = await getPostsData(locale, page);
+
+  const homeData = homeDataRes?.data;
+  const posts = postsDataRes?.data || [];
+  const pageCount = postsDataRes?.meta?.pagination?.pageCount || 1;
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <>
+      {homeData ? (
+        <Banner
+          title={homeData.header || (locale === "vi" ? "Blog của tôi" : "My Blog")}
+          thumbnailUrl={homeData.thumbnail?.url || null}
         />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.tsx</code> file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+      ) : (
+        <div style={{ textAlign: "center", padding: "2rem" }}>
+          <h2>Loading...</h2>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      )}
+
+      {posts.length > 0 ? (
+        <>
+          <h2 style={{ fontSize: "2rem", marginBottom: "2rem", textAlign: "center", color: "var(--text-primary)" }}>
+            {locale === "vi" ? "Bài viết mới nhất" : "Latest Posts"}
+          </h2>
+          <div className={styles.grid}>
+            {posts.map((post: any) => (
+              <PostCard
+                key={post.id}
+                id={post.id}
+                slug={post.slug}
+                title={post.title}
+                date={post.publishedAt || post.createdAt}
+                thumbnailUrl={post.thumbnail?.url || post.thumbnail?.formats?.thumbnail?.url || null}
+                locale={locale}
+              />
+            ))}
+          </div>
+          <Pagination pageCount={pageCount} />
+        </>
+      ) : (
+        <div
+          style={{ textAlign: "center", padding: "4rem", borderRadius: "20px" }}
+          className="glass"
+        >
+          <h2>Chưa có bài viết nào.</h2>
         </div>
-      </main>
-    </div>
+      )}
+    </>
   );
 }
