@@ -6,7 +6,7 @@ import axiosInstance from "@/lib/axios";
 async function getPostBySlug(slug: string, locale: string) {
   try {
     const res = await axiosInstance.get(
-      `/posts?filters[slug][$eq]=${slug}&populate=*&locale=${locale}`
+      `/posts?filters[slug][$eq]=${slug}&populate=*&locale=${locale}&sort[0]=createdAt:desc`
     );
     return res.data?.data?.[0] || null; // Strapi returns an array for filters
   } catch (error) {
@@ -39,8 +39,8 @@ export default async function PostDetail(props: { params: Params; searchParams: 
   return (
     <article className="glass" style={{ padding: "3rem", borderRadius: "30px", marginTop: "2rem" }}>
       <div style={{ marginBottom: "2rem" }}>
-        <Link 
-          href={`/?locale=${locale}`} 
+        <Link
+          href={`/?locale=${locale}`}
           style={{ color: "var(--primary-color)", fontWeight: "600", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}
         >
           ← Back to Home

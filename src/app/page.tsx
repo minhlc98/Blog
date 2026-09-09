@@ -18,7 +18,7 @@ async function getHomeData(locale: string) {
 async function getPostsData(locale: string, page: number) {
   try {
     const res = await axiosInstance.get(
-      `/posts?populate=*&locale=${locale}&pagination[page]=${page}&pagination[pageSize]=6`
+      `/posts?populate=*&locale=${locale}&pagination[page]=${page}&pagination[pageSize]=6&sort[0]=createdAt:desc`
     );
     return res.data;
   } catch (error) {

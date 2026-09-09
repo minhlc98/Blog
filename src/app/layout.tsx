@@ -4,8 +4,8 @@ import FallingFlowers from "@/components/FallingFlowers";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "My Pink Blog",
-  description: "A beautiful blog built with Next.js and Strapi",
+  title: "Bubu Dudu Blog",
+  description: "Nơi lưu giữ những khoảnh khắc ngọt ngào và kỷ niệm đáng yêu của Bubu và Dudu",
 };
 
 export default function RootLayout({

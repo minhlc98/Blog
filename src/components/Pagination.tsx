@@ -15,6 +15,8 @@ export default function Pagination({ pageCount }: PaginationProps) {
 
   if (pageCount <= 1) return null;
 
+  const pages = Array.from({ length: pageCount }, (_, i) => i + 1);
+
   return (
     <div className={styles.pagination}>
       <Link
@@ -22,19 +24,26 @@ export default function Pagination({ pageCount }: PaginationProps) {
         className={`${styles.button} ${currentPage <= 1 ? styles.disabled : ""}`}
         scroll={false}
       >
-        Prev
+        &laquo;
       </Link>
       
-      <span className={styles.pageInfo}>
-        Page {currentPage} of {pageCount}
-      </span>
+      {pages.map((page) => (
+        <Link
+          key={page}
+          href={`?page=${page}&locale=${currentLocale}`}
+          className={`${styles.pageNumber} ${currentPage === page ? styles.active : ""}`}
+          scroll={false}
+        >
+          {page}
+        </Link>
+      ))}
 
       <Link
         href={`?page=${currentPage + 1}&locale=${currentLocale}`}
         className={`${styles.button} ${currentPage >= pageCount ? styles.disabled : ""}`}
         scroll={false}
       >
-        Next
+        &raquo;
       </Link>
     </div>
   );
