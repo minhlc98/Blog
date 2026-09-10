@@ -66,7 +66,7 @@ export default async function Home(props: { searchParams: SearchParams }) {
                 id={post.id}
                 slug={post.slug}
                 title={post.title}
-                date={post.publishedAt || post.createdAt}
+                date={post.createdAt}
                 thumbnailUrl={post.thumbnail?.url || post.thumbnail?.formats?.thumbnail?.url || null}
                 locale={locale}
               />

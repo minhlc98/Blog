@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import styles from "./PostDetail.module.css";
 
 import axiosInstance from "@/lib/axios";
 
@@ -30,31 +31,31 @@ export default async function PostDetail(props: { params: Params; searchParams: 
   }
 
   const thumbnailUrl = post.thumbnail?.url;
-  const formattedDate = new Date(post.publishedAt || post.createdAt).toLocaleDateString(locale === "en" ? "en-US" : "vi-VN", {
+  const formattedDate = new Date(post.createdAt).toLocaleDateString(locale === "en" ? "en-US" : "vi-VN", {
     year: "numeric",
     month: locale === "en" ? "long" : "numeric",
     day: "numeric",
   });
 
   return (
-    <article className="glass" style={{ padding: "3rem", borderRadius: "30px", marginTop: "2rem" }}>
+    <article className={`glass ${styles.article}`}>
       <div style={{ marginBottom: "2rem" }}>
         <Link
           href={`/?locale=${locale}`}
           style={{ color: "var(--primary-color)", fontWeight: "600", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}
         >
-          ← Back to Home
+          ← Trờ về
         </Link>
       </div>
 
       {thumbnailUrl && (
-        <div style={{ width: "100%", height: "400px", borderRadius: "20px", overflow: "hidden", marginBottom: "2rem" }}>
-          <img src={thumbnailUrl} alt={post.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <div className={styles.thumbnailWrapper}>
+          <img src={thumbnailUrl} alt={post.title} className={styles.thumbnail} />
         </div>
       )}
 
-      <h1 style={{ fontSize: "3rem", marginBottom: "1rem", lineHeight: "1.2" }}>{post.title}</h1>
-      <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>Published on {formattedDate}</p>
+      <h1 className={styles.title}>{post.title}</h1>
+      <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>Ngày {formattedDate}</p>
 
       {/* Since Strapi rich text can be blocks or markdown, we just render content safely.
           If it's Blocks, we need blocks renderer. For simplicity, we just stringify if it's JSON, 
