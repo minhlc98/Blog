@@ -126,11 +126,35 @@ input {
 }
 
 /* Post Content styles */
-.post-content img {
+.post-content img,
+.post-content video {
   max-width: 100%;
   height: auto;
-  border-radius: 12px;
+  border-radius: 14px;
   box-shadow: 0 4px 15px rgba(200, 100, 150, 0.2);
   margin: 1.5rem auto;
   display: block;
+}
+
+.post-content video {
+  max-height: 80vh;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.post-content iframe,
+.post-content figure.media iframe {
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  border: none;
+  border-radius: 14px;
+  box-shadow: 0 4px 15px rgba(200, 100, 150, 0.2);
+  margin: 1.5rem auto;
+  display: block;
+}
+
+.post-content figure.media {
+  margin: 1.5rem auto;
+  max-width: 100%;
 }
