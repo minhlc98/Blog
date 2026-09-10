@@ -44,7 +44,7 @@ export default async function PostDetail(props: { params: Params; searchParams: 
           href={`/?locale=${locale}`}
           style={{ color: "var(--primary-color)", fontWeight: "600", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}
         >
-          ← Trờ về
+          ← Trở về
         </Link>
       </div>
 
