@@ -4,10 +4,10 @@ import styles from "./PostDetail.module.css";
 
 import axiosInstance from "@/lib/axios";
 
-async function getPostBySlug(slug: string, locale: string) {
+async function getPostBySlug(slug: string) {
   try {
     const res = await axiosInstance.get(
-      `/posts?filters[slug][$eq]=${slug}&populate=*&locale=${locale}&sort[0]=createdAt:desc`
+      `/posts?filters[slug][$eq]=${slug}&populate=*&locale=vi&sort[0]=createdAt:desc`
     );
     return res.data?.data?.[0] || null; // Strapi returns an array for filters
   } catch (error) {
@@ -17,23 +17,20 @@ async function getPostBySlug(slug: string, locale: string) {
 }
 
 type Params = Promise<{ slug: string }>;
-type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
-export default async function PostDetail(props: { params: Params; searchParams: SearchParams }) {
+export default async function PostDetail(props: { params: Params }) {
   const params = await props.params;
-  const searchParams = await props.searchParams;
-  const locale = searchParams.locale === "en" ? "en" : "vi";
 
-  const post = await getPostBySlug(params.slug, locale);
+  const post = await getPostBySlug(params.slug);
 
   if (!post) {
     return notFound();
   }
 
   const thumbnailUrl = post.thumbnail?.url;
-  const formattedDate = new Date(post.createdAt).toLocaleDateString(locale === "en" ? "en-US" : "vi-VN", {
+  const formattedDate = new Date(post.createdAt).toLocaleDateString("vi-VN", {
     year: "numeric",
-    month: locale === "en" ? "long" : "numeric",
+    month: "long",
     day: "numeric",
   });
 
@@ -41,21 +38,21 @@ export default async function PostDetail(props: { params: Params; searchParams: 
     <article className={`glass ${styles.article}`}>
       <div style={{ marginBottom: "2rem" }}>
         <Link
-          href={`/?locale=${locale}`}
+          href="/"
           style={{ color: "var(--primary-color)", fontWeight: "600", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}
         >
           ← Trở về
         </Link>
       </div>
 
+      <h1 className={styles.title}>{post.title}</h1>
+      <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>Ngày {formattedDate}</p>
+
       {thumbnailUrl && (
         <div className={styles.thumbnailWrapper}>
           <img src={thumbnailUrl} alt={post.title} className={styles.thumbnail} />
         </div>
       )}
-
-      <h1 className={styles.title}>{post.title}</h1>
-      <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>Ngày {formattedDate}</p>
 
       {/* Since Strapi rich text can be blocks or markdown, we just render content safely.
           If it's Blocks, we need blocks renderer. For simplicity, we just stringify if it's JSON, 

@@ -5,9 +5,9 @@ import styles from "@/components/PostCard.module.css";
 
 import axiosInstance from "@/lib/axios";
 
-async function getHomeData(locale: string) {
+async function getHomeData() {
   try {
-    const res = await axiosInstance.get(`/home?populate=*&locale=${locale}`);
+    const res = await axiosInstance.get(`/home?populate=*&locale=vi`);
     return res.data;
   } catch (error) {
     console.error("Failed to fetch home data", error);
@@ -15,10 +15,10 @@ async function getHomeData(locale: string) {
   }
 }
 
-async function getPostsData(locale: string, page: number) {
+async function getPostsData(page: number) {
   try {
     const res = await axiosInstance.get(
-      `/posts?populate=*&locale=${locale}&pagination[page]=${page}&pagination[pageSize]=6&sort[0]=createdAt:desc`
+      `/posts?populate=*&locale=vi&pagination[page]=${page}&pagination[pageSize]=6&sort[0]=createdAt:desc`
     );
     return res.data;
   } catch (error) {
@@ -31,11 +31,10 @@ type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
 export default async function Home(props: { searchParams: SearchParams }) {
   const searchParams = await props.searchParams;
-  const locale = searchParams.locale === "en" ? "en" : "vi";
   const page = Number(searchParams.page) || 1;
 
-  const homeDataRes = await getHomeData(locale);
-  const postsDataRes = await getPostsData(locale, page);
+  const homeDataRes = await getHomeData();
+  const postsDataRes = await getPostsData(page);
 
   const homeData = homeDataRes?.data;
   const posts = postsDataRes?.data || [];
@@ -45,7 +44,7 @@ export default async function Home(props: { searchParams: SearchParams }) {
     <>
       {homeData ? (
         <Banner
-          title={homeData.header || (locale === "vi" ? "Blog của tôi" : "My Blog")}
+          title={homeData.header || "Blog của tôi"}
           thumbnailUrl={homeData.thumbnail?.url || null}
         />
       ) : (
@@ -57,7 +56,7 @@ export default async function Home(props: { searchParams: SearchParams }) {
       {posts.length > 0 ? (
         <>
           <h2 style={{ fontSize: "2rem", marginBottom: "2rem", textAlign: "center", color: "var(--text-primary)" }}>
-            {locale === "vi" ? "Bài viết mới nhất" : "Latest Posts"}
+            Bài viết mới nhất
           </h2>
           <div className={styles.grid}>
             {posts.map((post: any) => (
@@ -68,7 +67,6 @@ export default async function Home(props: { searchParams: SearchParams }) {
                 title={post.title}
                 date={post.createdAt}
                 thumbnailUrl={post.thumbnail?.url || post.thumbnail?.formats?.thumbnail?.url || null}
-                locale={locale}
               />
             ))}
           </div>

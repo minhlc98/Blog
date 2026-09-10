@@ -7,16 +7,15 @@ interface PostCardProps {
   title: string;
   thumbnailUrl?: string;
   date: string;
-  locale?: string;
 }
 
-export default function PostCard({ slug, title, thumbnailUrl, date, locale = "vi" }: PostCardProps) {
-  const formattedDate = new Date(date).toLocaleDateString(locale === "en" ? "en-US" : "vi-VN", {
+export default function PostCard({ slug, title, thumbnailUrl, date }: PostCardProps) {
+  const formattedDate = new Date(date).toLocaleDateString("vi-VN", {
     year: "numeric",
-    month: locale === "en" ? "short" : "numeric",
+    month: "numeric",
     day: "numeric",
   });
-  const readMoreText = locale === "en" ? "Read Article" : "Đọc bài viết";
+  const readMoreText = "Đọc bài viết";
 
   return (
     <Link href={`/posts/${slug}`} className={styles.card}>

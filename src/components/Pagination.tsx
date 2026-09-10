@@ -11,7 +11,6 @@ interface PaginationProps {
 export default function Pagination({ pageCount }: PaginationProps) {
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get("page")) || 1;
-  const currentLocale = searchParams.get("locale") || "vi";
 
   if (pageCount <= 1) return null;
 
@@ -20,7 +19,7 @@ export default function Pagination({ pageCount }: PaginationProps) {
   return (
     <div className={styles.pagination}>
       <Link
-        href={`?page=${currentPage - 1}&locale=${currentLocale}`}
+        href={`?page=${currentPage - 1}`}
         className={`${styles.button} ${currentPage <= 1 ? styles.disabled : ""}`}
         scroll={false}
       >
@@ -30,7 +29,7 @@ export default function Pagination({ pageCount }: PaginationProps) {
       {pages.map((page) => (
         <Link
           key={page}
-          href={`?page=${page}&locale=${currentLocale}`}
+          href={`?page=${page}`}
           className={`${styles.pageNumber} ${currentPage === page ? styles.active : ""}`}
           scroll={false}
         >
@@ -39,7 +38,7 @@ export default function Pagination({ pageCount }: PaginationProps) {
       ))}
 
       <Link
-        href={`?page=${currentPage + 1}&locale=${currentLocale}`}
+        href={`?page=${currentPage + 1}`}
         className={`${styles.button} ${currentPage >= pageCount ? styles.disabled : ""}`}
         scroll={false}
       >
